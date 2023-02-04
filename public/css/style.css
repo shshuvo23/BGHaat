@@ -1,0 +1,84 @@
+.carusal{
+    height: 100vh;
+    animation-name: example;
+    background-repeat: no-repeat;
+    background-size: cover;
+    animation-duration: 6s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes example {
+    0%   {background-image: url('../images/image1.jpg');}
+    25%  {background-image: url('../images/image2.jpg');}
+    50%  {background-image: url('../images/image3.jpg');}
+    100% {background-image: url('../images/image4.jpg');}
+  }
+
+  .inner-div{
+      padding-top: 100px;
+      height: 100vh;
+      background-color: black;
+      opacity: 0.5;
+  }
+
+
+
+
+
+
+
+  .autocomplete {
+    /*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
+  }
+  input {
+    border: 1px solid transparent;
+    background-color: #f1f1f1;
+    padding: 10px;
+    font-size: 16px;
+  }
+  input[type=text] {
+    background-color: #f1f1f1;
+    width: 100%;
+  }
+  input[type=submit] {
+    background-color: DodgerBlue;
+    color: #fff;
+  }
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+  }
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+  }
+  .autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #e9e9e9;
+  }
+  .autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+  }
+
+  .roundedTop {
+    border-top-left-radius: 6rem !important;
+    border-top-right-radius: 6rem !important;
+  }
+
+  .roundedBottom {
+    border-bottom-right-radius: 6rem !important;
+    border-bottom-left-radius: 6rem !important;
+  }

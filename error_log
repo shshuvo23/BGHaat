@@ -1,0 +1,8 @@
+[03-Jul-2022 01:00:09 America/New_York] PHP Fatal error:  Uncaught Error: Undefined constant "_DIR_" in /home/tzinxdzk/bghaat.com/liveshop/index.php:26
+Stack trace:
+#0 {main}
+  thrown in /home/tzinxdzk/bghaat.com/liveshop/index.php on line 26
+[03-Jul-2022 01:00:14 America/New_York] PHP Fatal error:  Uncaught Error: Undefined constant "_DIR_" in /home/tzinxdzk/bghaat.com/liveshop/index.php:26
+Stack trace:
+#0 {main}
+  thrown in /home/tzinxdzk/bghaat.com/liveshop/index.php on line 26
