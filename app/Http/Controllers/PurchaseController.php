@@ -100,7 +100,8 @@ class PurchaseController extends Controller
         return view('admin/purchase/purchaseList')->with(compact('purchases', 'products'));
     }
 
-    protected function updatePuschase(Request $request){
+    protected function updatePuschase(Request $request)
+    {
         $rules = [
             'product_id' => 'required|numeric',
             'price' => 'required|numeric',
@@ -108,29 +109,30 @@ class PurchaseController extends Controller
             'date' => 'required|date',
             'total' => 'required|numeric',
         ];
-		$validator = Validator::make($request->all(),$rules);
-		if ($validator->fails()) {
-			return redirect()->route('purchase_list')
-                	->withInput()
-                	->withErrors($validator);
-            		//return response();
-		}
-		else{
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->route('purchase_list')
+                ->withInput()
+                ->withErrors($validator);
+            //return response();
+        } else {
             $data = $request->input();
-			try{
-				$purchase = Purchase::find($data['id']);
-                		$purchase->product_id = $data['product_id'];
-                		$purchase->price = $data['price'];
-                		$purchase->quantity = $data['quantity'];
-                		$purchase->date = $data['date'];
-                		$purchase->total = $data['total'];
-				$purchase->update();
-				return redirect()->route('purchase_list')->with('status', "Insert successfully");
-                		}
-			catch(Exception $e){
-				return redirect()->route('purchase_list')->with('failed', "operation failed");
-				}
-			}
+            try {
+                $purchase = Purchase::find($data['id']);
+                $purchase->product_id = $data['product_id'];
+                $purchase->price = $data['price'];
+                $purchase->quantity = $data['quantity'];
+                $purchase->free_quantity = $data['free_quantity'] ? $data['free_quantity'] : 0;
+                $purchase->paid = $data['paid'];
+                $purchase->date = $data['date'];
+                $purchase->total = $data['total'];
+                $purchase->current_price = ($data['current_price']);
+                $purchase->update();
+                return redirect()->route('purchase_list')->with('status', "Insert successfully");
+            } catch (Exception $e) {
+                return redirect()->route('purchase_list')->with('failed', "operation failed");
+            }
+        }
     }
 
 

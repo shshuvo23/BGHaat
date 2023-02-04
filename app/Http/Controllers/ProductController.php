@@ -10,7 +10,7 @@ use App\Models\Outlet;
 use App\Models\Product;
 use App\Models\Inventory;
 use Illuminate\Support\Str;
-use Exception;git 
+use Exception;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;

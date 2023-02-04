@@ -116,7 +116,7 @@
                             <div class="col-md-4">
                                 <label for="total " >{{ __('Total Price') }}<span>*</span></label>
 
-                                <input id="total" step="0.1" onchange="currentPrice('total')"step="0.01" type="number" class="form-control @error('total') is-invalid @enderror" name="total" value="{{ old('total') }}" required autocomplete="total" autofocus>
+                                <input id="total" step="0.1" onchange="currentPrice('total')" step="0.01" type="number" class="form-control @error('total') is-invalid @enderror" name="total" value="{{ old('total') }}" required autocomplete="total" autofocus>
 
                                 @error('total')
                                     <span class="invalid-feedback" role="alert">

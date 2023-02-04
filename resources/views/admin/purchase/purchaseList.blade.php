@@ -83,7 +83,7 @@
                         <div class="form-group">
                             <input type="text" id="id" name="id" hidden>
                             <div class="row">
-                                <div class="col">
+                                <div class="col-md-6">
                                     <label for="product_id" class="col-form-label">Product Name:</label>
                                     <select id="product_id" name="product_id"
                                         class="form-select form-control @error('user_outlet') is-invalid @enderror"
@@ -94,23 +94,34 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col">
+                                <div class="col-md-6">
                                     <label for="price_per_unite" class="col-form-label">Price per Unite:</label>
-                                    <input type="number" onchange="numberInputTracking('price_per_unite')"
+                                    <input type="number" onchange="totalPrice('price_per_unite')"
                                         class="form-control" id="price_per_unite" name="price_per_unite">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="row">
-                                <div class="col">
+                                <div class="col-md-3">
                                     <label for="quantity" class="col-form-label">Quantity:</label>
-                                    <input type="number" onchange="numberInputTracking('quantity')" class="form-control"
+                                    <input type="number" onchange="totalPrice('quantity')" class="form-control"
                                         id="quantity" name="quantity">
                                 </div>
-                                <div class="col">
+
+                                <div class="col-md-3">
+                                    <label for="free_quantity" class="col-form-lable">Free Quantity:</label>
+                                    <input type="number" onchange="currentPrice('free_quantity')" step="0.01" class="form-control" id="free_quantity" name="free_quantity">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="current_unit_price" class="col-form-label">Current Unit Price:</label>
+                                    <input type="number" onchange="" step="0.01" class="form-control"
+                                        id="current_price" name="current_price">
+                                </div>
+                                <div class="col-md-3">
                                     <label for="total" class="col-form-label">Total:</label>
-                                    <input type="number" onchange="numberInputTracking('total')" class="form-control"
+                                    <input type="number" onchange="currentPrice('total')" class="form-control"
                                         id="total" name="total">
                                 </div>
                             </div>
@@ -119,10 +130,16 @@
                         <div class="form-group">
                             <div class="row">
 
-                                <div class="col">
+                                <div class="col-md-6">
                                     <label for="date" class="col-form-label">Date:</label>
                                     <input type="date" class="form-control" id="date" name="date">
                                 </div>
+                                <div class="col-md-6">
+                                    <label for="paid" class="col-form-label">Paid:</label>
+                                    <input type="number" onchange="currentPrice('total')" class="form-control"
+                                        id="paid" name="paid">
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -153,11 +170,56 @@
             console.log(document.getElementById('quantity'));
             document.getElementById('id').value = purchase.id;
             document.getElementById('price_per_unite').value = purchase.price;
+            document.getElementById('free_quantity').value = purchase.free_quantity;
+            document.getElementById('current_price').value = purchase.current_price;
             document.getElementById('total').value = purchase.total;
+            document.getElementById('paid').value = purchase.paid;
             document.getElementById('date').value = purchase.date;
             // alert(purchase.price_per_unite);
             document.getElementById('quantity').value = purchase.quantity;
             document.getElementById('option' + purchase.product_id).selected = true;
+
+        }
+    </script>
+
+    <script>
+        function totalPrice(data){
+            if(data == 'quantity')numberInputTracking('quantity');
+            if(data == 'price_per_unite')numberInputTracking('price_per_unite');
+
+            var quantity = document.getElementById('quantity').value;
+            var price = document.getElementById('price_per_unite').value;
+
+            if(quantity != "" && price != ""){
+                document.getElementById('total').value = (parseFloat(quantity) * parseFloat(price));
+                currentPrice('total');
+            }
+        }
+    </script>
+
+    <script>
+        function currentPrice(data){
+
+            if(data == 'quantity')numberInputTracking('quantity');
+            if(data == 'free_quantity')numberInputTracking('free_quantity');
+            if(data == 'paid')numberInputTracking('paid');
+            if(data == 'total')numberInputTracking('total');
+
+            var quantity = document.getElementById('quantity').value;
+            var free_quantity = document.getElementById('free_quantity').value;
+            var paid = document.getElementById('paid').value;
+            var total = document.getElementById('total').value;
+
+            if(!paid){paid = 0;}
+            if(!free_quantity){free_quantity = 0;}
+
+
+
+            total_quantity = parseFloat(quantity) + parseFloat(free_quantity);
+
+            if(quantity != "" && total != ""){
+                document.getElementById('current_price').value = (parseFloat(paid)/parseFloat(total_quantity)).toFixed(2);
+            }
 
         }
     </script>
@@ -168,8 +230,11 @@
              let id = document.getElementById('id').value;
              let date = document.getElementById('date').value;
              let price =  document.getElementById('price_per_unite').value;
+             let free_quantity = document.getElementById('free_quantity').value;
+             let current_price = document.getElementById('current_price').value;
              let quantity = document.getElementById('quantity').value ;
              let total = document.getElementById('total').value;
+             let paid = document.getElementById('paid').value;
              let product_id = document.getElementById('product_id').value;
 
 
@@ -185,8 +250,11 @@
                     'id': id,
                     'date': date,
                     'price': price,
+                    'free_quantity': free_quantity,
                     'quantity':quantity ,
+                    'current_price': current_price,
                     'total': total,
+                    'paid': paid,
                     'product_id': product_id
                 },
                 success: function(data) {
