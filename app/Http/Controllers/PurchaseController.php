@@ -92,16 +92,18 @@ class PurchaseController extends Controller
     protected function purchaseList()
     {
         $products = Product::where('is_deleted', 0)->get();
+        $outlets = Outlet::all();
         $purchases = Purchase::Join('products', 'purchases.product_id', '=', 'products.id')
             ->Join('outlets', 'purchases.outlet_id', '=', 'outlets.id')
             ->select('purchases.id', 'purchases.product_id', 'purchases.price', 'purchases.current_price', 'purchases.total', 'purchases.paid', 'purchases.quantity', 'purchases.free_quantity', 'purchases.date', 'products.name', 'outlets.name as outlet_name', 'outlets.address')
             ->where('purchases.is_deleted', 0)
             ->get();
-        return view('admin/purchase/purchaseList')->with(compact('purchases', 'products'));
+        return view('admin/purchase/purchaseList')->with(compact('purchases', 'products', 'outlets'));
     }
 
     protected function updatePuschase(Request $request)
     {
+        // return  $request;
         $rules = [
             'product_id' => 'required|numeric',
             'price' => 'required|numeric',
@@ -110,6 +112,7 @@ class PurchaseController extends Controller
             'total' => 'required|numeric',
         ];
         $validator = Validator::make($request->all(), $rules);
+
         if ($validator->fails()) {
             return redirect()->route('purchase_list')
                 ->withInput()
@@ -117,6 +120,58 @@ class PurchaseController extends Controller
             //return response();
         } else {
             $data = $request->input();
+            $purchase = Purchase::find($data['id']);
+
+            $qtyChange = false;
+            $nameOutletChange = false;
+
+            if ($purchase->outlet_id != $data['outlet_id'] || $purchase->product_id != $data['product_id']) {
+                $nameOutletChange = true;
+            }
+            if ($purchase->quantity != $data['quantity'] || $purchase->free_quantity != $data['free_quantity']) {
+                $qtyChange = true;
+            }
+
+            if ($nameOutletChange || $qtyChange) {
+                if ($nameOutletChange) {
+                    $stock = Inventory::where('outlet_id', $purchase->outlet_id)->where('product_id', $purchase->product_id)->first();
+                    if ($stock && $stock->quantity >= $purchase->quantity + $purchase->free_quantity) {
+                        $stock->quantity -= ($purchase->quantity + $purchase->free_quantity);
+                        $stock->update();
+                        $stock = Inventory::where('outlet_id', $data['outlet_id'])->where('product_id', $data['product_id'])->first();
+                        if ($stock) {
+                            $stock->quantity += ($data['quantity'] + $data['free_quantity']);
+                            $stock->update();
+                        } else {
+                            $stock = new Inventory();
+                            $stock->product_id = $data['product_id'];
+                            $stock->outlet_id = $data['outlet_id'];
+                            $stock->quantity = ($data['quantity'] + $data['free_quantity']);
+                            $stock->save();
+                        }
+                    } else {
+                        return "Update Not Possible";
+                    }
+                }
+                if ($qtyChange) {
+                    $totalQtty = $data['quantity'] + $data['free_quantity'];
+                    $stock = Inventory::where('outlet_id', $data['outlet_id'])->where('product_id', $data['product_id'])->first();
+                    if ($stock && $totalQtty < ($purchase->quantity + $purchase->free_quantity)) {
+                        $dif =  ($purchase->quantity + $purchase->free_quantity) - $totalQtty;
+                        // return $stock->quantity;
+                        $stock->quantity -= $dif;
+                        // return $stock->quantity;
+                        // return $dif;
+                        $stock->update();
+                    } else {
+                        $dif = $totalQtty - ($purchase->quantity + $purchase->free_quantity);
+                        $stock->quantity += $dif;
+                        $stock->update();
+                    }
+                }
+            }
+            // return $purchase;
+
             try {
                 $purchase = Purchase::find($data['id']);
                 $purchase->product_id = $data['product_id'];
@@ -128,9 +183,12 @@ class PurchaseController extends Controller
                 $purchase->total = $data['total'];
                 $purchase->current_price = ($data['current_price']);
                 $purchase->update();
-                return redirect()->route('purchase_list')->with('status', "Insert successfully");
+
+                // return redirect()->route('purchase_list')->with('status', "Insert successfully");
+                return "Success";
             } catch (Exception $e) {
-                return redirect()->route('purchase_list')->with('failed', "operation failed");
+                // return redirect()->route('purchase_list')->with('failed', "operation failed");
+                return "Error";
             }
         }
     }

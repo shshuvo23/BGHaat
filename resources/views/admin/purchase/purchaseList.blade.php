@@ -83,7 +83,36 @@
                         <div class="form-group">
                             <input type="text" id="id" name="id" hidden>
                             <div class="row">
-                                <div class="col-md-6">
+{{--
+                                <div class="col-md-4">
+                                    <!-- <input  type="text" class="" name="product_id" value="" required autocomplete="product_id" autofocus> -->
+                                    <label for="outlet_id" >Outlet Name:</label>
+
+                                    <select id="outlet_id" name="outlet_id" class="form-select form-control @error('outlet_id') is-invalid @enderror" aria-label="Default select example" value="{{ old('outlet_id') }}" required autocomplete="outlet_id" autofocus>
+                                        <option value="" selected disabled hidden>--Select Outlet--</option>
+                                        @foreach($outlets as $outlet)
+                                            <option value="{{$outlet->id}}">{{$outlet->name}}({{$outlet->address}})</option>
+                                        @endforeach
+                                    </select>
+                                    @error('product_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div> --}}
+                                <div class="col-md-4">
+                                    <label for="outlet_id" class="col-form-label">Outlet Name:</label>
+                                    <select id="outlet_id" name="outlet_id"
+                                        class="form-select form-control @error('user_outlet') is-invalid @enderror"
+                                        aria-label="Default select example" required autofocus>
+                                        @foreach ($outlets as $outlet)
+                                            <option id="option{{ $outlet->id }}" value="{{ $outlet->id }}">
+                                                {{ $outlet->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
                                     <label for="product_id" class="col-form-label">Product Name:</label>
                                     <select id="product_id" name="product_id"
                                         class="form-select form-control @error('user_outlet') is-invalid @enderror"
@@ -94,10 +123,10 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label for="price_per_unite" class="col-form-label">Price per Unite:</label>
-                                    <input type="number" onchange="totalPrice('price_per_unite')"
-                                        class="form-control" id="price_per_unite" name="price_per_unite">
+                                    <input type="number" onchange="totalPrice('price_per_unite')" class="form-control"
+                                        id="price_per_unite" name="price_per_unite">
                                 </div>
                             </div>
                         </div>
@@ -111,7 +140,8 @@
 
                                 <div class="col-md-3">
                                     <label for="free_quantity" class="col-form-lable">Free Quantity:</label>
-                                    <input type="number" onchange="currentPrice('free_quantity')" step="0.01" class="form-control" id="free_quantity" name="free_quantity">
+                                    <input type="number" onchange="currentPrice('free_quantity')" step="0.01"
+                                        class="form-control" id="free_quantity" name="free_quantity">
                                 </div>
 
                                 <div class="col-md-3">
@@ -145,7 +175,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" onclick="updatePuschase()" id="update_button"
+                        <button type="button" onclick="updatePuschase()" id="update_button"
                             class="btn btn-primary">Update</button>
                     </div>
                 </form>
@@ -183,14 +213,14 @@
     </script>
 
     <script>
-        function totalPrice(data){
-            if(data == 'quantity')numberInputTracking('quantity');
-            if(data == 'price_per_unite')numberInputTracking('price_per_unite');
+        function totalPrice(data) {
+            if (data == 'quantity') numberInputTracking('quantity');
+            if (data == 'price_per_unite') numberInputTracking('price_per_unite');
 
             var quantity = document.getElementById('quantity').value;
             var price = document.getElementById('price_per_unite').value;
 
-            if(quantity != "" && price != ""){
+            if (quantity != "" && price != "") {
                 document.getElementById('total').value = (parseFloat(quantity) * parseFloat(price));
                 currentPrice('total');
             }
@@ -198,27 +228,31 @@
     </script>
 
     <script>
-        function currentPrice(data){
+        function currentPrice(data) {
 
-            if(data == 'quantity')numberInputTracking('quantity');
-            if(data == 'free_quantity')numberInputTracking('free_quantity');
-            if(data == 'paid')numberInputTracking('paid');
-            if(data == 'total')numberInputTracking('total');
+            if (data == 'quantity') numberInputTracking('quantity');
+            if (data == 'free_quantity') numberInputTracking('free_quantity');
+            if (data == 'paid') numberInputTracking('paid');
+            if (data == 'total') numberInputTracking('total');
 
             var quantity = document.getElementById('quantity').value;
             var free_quantity = document.getElementById('free_quantity').value;
             var paid = document.getElementById('paid').value;
             var total = document.getElementById('total').value;
 
-            if(!paid){paid = 0;}
-            if(!free_quantity){free_quantity = 0;}
+            if (!paid) {
+                paid = 0;
+            }
+            if (!free_quantity) {
+                free_quantity = 0;
+            }
 
 
 
             total_quantity = parseFloat(quantity) + parseFloat(free_quantity);
 
-            if(quantity != "" && total != ""){
-                document.getElementById('current_price').value = (parseFloat(paid)/parseFloat(total_quantity)).toFixed(2);
+            if (quantity != "" && total != "") {
+                document.getElementById('current_price').value = (parseFloat(paid) / parseFloat(total_quantity)).toFixed(2);
             }
 
         }
@@ -227,37 +261,41 @@
     <script>
         function updatePuschase(puschase) {
 
-             let id = document.getElementById('id').value;
-             let date = document.getElementById('date').value;
-             let price =  document.getElementById('price_per_unite').value;
-             let free_quantity = document.getElementById('free_quantity').value;
-             let current_price = document.getElementById('current_price').value;
-             let quantity = document.getElementById('quantity').value ;
-             let total = document.getElementById('total').value;
-             let paid = document.getElementById('paid').value;
-             let product_id = document.getElementById('product_id').value;
+            let id = document.getElementById('id').value;
+            let date = document.getElementById('date').value;
+            let price = document.getElementById('price_per_unite').value;
+            let free_quantity = document.getElementById('free_quantity').value;
+            let current_price = document.getElementById('current_price').value;
+            let quantity = document.getElementById('quantity').value;
+            let total = document.getElementById('total').value;
+            let paid = document.getElementById('paid').value;
+            let product_id = document.getElementById('product_id').value;
+            let outlet_id = document.getElementById('outlet_id').value;
 
 
-             $.ajaxSetup({
+            $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 }
             });
-             $.ajax({
-                url: '{{route('update_puschase')}}',
+            $.ajax({
+                url: '{{ route('update_puschase') }}',
                 type: 'post',
                 data: {
                     'id': id,
                     'date': date,
                     'price': price,
                     'free_quantity': free_quantity,
-                    'quantity':quantity ,
+                    'quantity': quantity,
                     'current_price': current_price,
                     'total': total,
                     'paid': paid,
-                    'product_id': product_id
+                    'product_id': product_id,
+                    'outlet_id': outlet_id
                 },
                 success: function(data) {
+                    // $("#tech-companies-1").html(data);
+                    console.log(data);
                     $('.item' + data.id).replaceWith("<tr class='item" + data.id + "'><td>" + data.id +
                         "</td><td>" + data.name + "</td><td>" + data.email +
                         "</td><td><button class='edit-modal btn btn-info' data-id='" + data.id +
