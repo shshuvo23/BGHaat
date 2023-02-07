@@ -13,7 +13,7 @@
             </form>
         </div>
         <div class="table-rep-plugin">
-            <div class="table-responsive mb-0" data-pattern="priority-columns">
+            <div class="table-responsive mb-0" data-pattern="priority-columns" id="purchaseList">
                 <table id="tech-companies-1" class="table table-striped">
                     <thead>
                         <tr>
@@ -83,14 +83,14 @@
                         <div class="form-group">
                             <input type="text" id="id" name="id" hidden>
                             <div class="row">
-{{--
+                                {{--
                                 <div class="col-md-4">
                                     <!-- <input  type="text" class="" name="product_id" value="" required autocomplete="product_id" autofocus> -->
                                     <label for="outlet_id" >Outlet Name:</label>
 
                                     <select id="outlet_id" name="outlet_id" class="form-select form-control @error('outlet_id') is-invalid @enderror" aria-label="Default select example" value="{{ old('outlet_id') }}" required autocomplete="outlet_id" autofocus>
                                         <option value="" selected disabled hidden>--Select Outlet--</option>
-                                        @foreach($outlets as $outlet)
+                                        @foreach ($outlets as $outlet)
                                             <option value="{{$outlet->id}}">{{$outlet->name}}({{$outlet->address}})</option>
                                         @endforeach
                                     </select>
@@ -106,7 +106,7 @@
                                         class="form-select form-control @error('user_outlet') is-invalid @enderror"
                                         aria-label="Default select example" required autofocus>
                                         @foreach ($outlets as $outlet)
-                                            <option id="option{{ $outlet->id }}" value="{{ $outlet->id }}">
+                                            <option id="outletoption{{ $outlet->id }}" value="{{ $outlet->id }}">
                                                 {{ $outlet->name }}</option>
                                         @endforeach
                                     </select>
@@ -174,7 +174,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="close" class="btn btn-secondary"
+                            data-dismiss="modal">Close</button>
                         <button type="button" onclick="updatePuschase()" id="update_button"
                             class="btn btn-primary">Update</button>
                     </div>
@@ -208,6 +209,9 @@
             // alert(purchase.price_per_unite);
             document.getElementById('quantity').value = purchase.quantity;
             document.getElementById('option' + purchase.product_id).selected = true;
+            // $("#outlet_id").val(purchase.outlet_id);
+            // console.log(purchase);
+            document.getElementById('outletoption' + purchase.outlet_id).selected = true;
 
         }
     </script>
@@ -296,13 +300,9 @@
                 success: function(data) {
                     // $("#tech-companies-1").html(data);
                     console.log(data);
-                    $('.item' + data.id).replaceWith("<tr class='item" + data.id + "'><td>" + data.id +
-                        "</td><td>" + data.name + "</td><td>" + data.email +
-                        "</td><td><button class='edit-modal btn btn-info' data-id='" + data.id +
-                        "' data-name='" + data.name + "' data-email='" + data.email +
-                        "'><span class='glyphicon glyphicon-edit'></span> Edit</button> <button class='delete-modal btn btn-danger' data-id='" +
-                        data.id + "' data-name='" + data.name + "' data-email='" + data.email +
-                        "'><span class='glyphicon glyphicon-trash'></span> Delete</button></td></tr>");
+                    $("#purchaseList").html(data);
+                    document.getElementById("close").click();
+
                 }
             });
 

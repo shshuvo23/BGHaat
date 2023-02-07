@@ -95,7 +95,7 @@ class PurchaseController extends Controller
         $outlets = Outlet::all();
         $purchases = Purchase::Join('products', 'purchases.product_id', '=', 'products.id')
             ->Join('outlets', 'purchases.outlet_id', '=', 'outlets.id')
-            ->select('purchases.id', 'purchases.product_id', 'purchases.price', 'purchases.current_price', 'purchases.total', 'purchases.paid', 'purchases.quantity', 'purchases.free_quantity', 'purchases.date', 'products.name', 'outlets.name as outlet_name', 'outlets.address')
+            ->select('purchases.id', 'purchases.product_id', 'purchases.price', 'purchases.current_price', 'purchases.total', 'purchases.paid', 'purchases.quantity', 'purchases.free_quantity', 'purchases.date', 'products.name', 'outlets.name as outlet_name', 'outlets.address', 'outlets.id as outlet_id')
             ->where('purchases.is_deleted', 0)
             ->get();
         return view('admin/purchase/purchaseList')->with(compact('purchases', 'products', 'outlets'));
@@ -175,6 +175,7 @@ class PurchaseController extends Controller
             try {
                 $purchase = Purchase::find($data['id']);
                 $purchase->product_id = $data['product_id'];
+                $purchase->outlet_id = $data['outlet_id'];
                 $purchase->price = $data['price'];
                 $purchase->quantity = $data['quantity'];
                 $purchase->free_quantity = $data['free_quantity'] ? $data['free_quantity'] : 0;
@@ -184,7 +185,17 @@ class PurchaseController extends Controller
                 $purchase->current_price = ($data['current_price']);
                 $purchase->update();
 
-                // return redirect()->route('purchase_list')->with('status', "Insert successfully");
+
+
+                // $products = Product::where('is_deleted', 0)->get();
+                // $outlets = Outlet::all();
+                $purchases = Purchase::Join('products', 'purchases.product_id', '=', 'products.id')
+                    ->Join('outlets', 'purchases.outlet_id', '=', 'outlets.id')
+                    ->select('purchases.id', 'purchases.product_id', 'purchases.price', 'purchases.current_price', 'purchases.total', 'purchases.paid', 'purchases.quantity', 'purchases.free_quantity', 'purchases.date', 'products.name', 'outlets.name as outlet_name', 'outlets.address')
+                    ->where('purchases.is_deleted', 0)
+                    ->get();
+
+                return view('admin.purchase.purchaseListTable', compact('purchases'));
                 return "Success";
             } catch (Exception $e) {
                 // return redirect()->route('purchase_list')->with('failed', "operation failed");
